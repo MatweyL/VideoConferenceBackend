@@ -1,6 +1,12 @@
+from fastapi import FastAPI
 
 
-app = None
+app = FastAPI()
+
+
+@app.get('/ping')
+async def ping():
+    return {'message': 'pong'}
 
 
 def main():
