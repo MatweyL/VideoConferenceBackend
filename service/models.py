@@ -17,5 +17,6 @@ class UserInfo(User):
     last_name: Optional[str]
 
 
-
-
+class Token(BaseEntity):
+    token: str
+    type: str
