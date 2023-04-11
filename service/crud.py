@@ -1,8 +1,8 @@
 from abc import abstractmethod
-from typing import Union, Iterable
+from typing import Dict
 
-from service.database import AbstractDB
-from service.exceptions import PrimaryKeyAlreadyExistsError, UsernameAlreadyExistsError, UserNotExistingError
+from service.core import SingletonMeta
+from service.exceptions import UsernameAlreadyExistsError, UserNotExistingError
 from service.models import User
 
 
@@ -13,7 +13,7 @@ class AbstractCRUD:
         pass
 
     @abstractmethod
-    def read(self, *args, **kwargs):
+    def read(self, pk, *args, **kwargs):
         pass
 
     @abstractmethod
@@ -21,8 +21,19 @@ class AbstractCRUD:
         pass
 
     @abstractmethod
-    def delete(self, *args, **kwargs):
+    def delete(self, pk, *args, **kwargs):
         pass
+
+
+class CRUDFacade(metaclass=SingletonMeta):
+
+    def __init__(self):
+        self._cruds: Dict = {
+            User: UserCRUD()
+        }
+
+    def crud(self, crud_class) -> AbstractCRUD:
+        return self._cruds[crud_class]
 
 
 class UserCRUD(AbstractCRUD):
