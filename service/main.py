@@ -1,18 +1,14 @@
-import datetime
-from hashlib import md5
+from fastapi import FastAPI, HTTPException
 
 from fastapi import FastAPI, HTTPException
 
-from service.crud import CRUDFacade
+from service.crud import crud_manager
 from service.exceptions import UsernameAlreadyExistsError, UserNotExistingError
-from service.models import User, Token
+from service.models import User, AccessToken, UserDTO
+from service.services import create_access_token
 
 app = FastAPI()
-crud = CRUDFacade()
 
-
-def get_token(user: User) -> Token:
-    return Token(token=md5(f'{user.username}{user.password}{datetime.datetime.now()}'.encode()).hexdigest(), type='bearer')
 
 @app.get('/ping')
 async def ping():
@@ -20,20 +16,20 @@ async def ping():
 
 
 @app.post('/users/register', status_code=201, response_model=User)
-async def register_user(user: User):
+async def register_user(user: UserDTO):
     try:
-        crud_user = crud.crud(User).create(user)
+        user_db = crud_manager.crud_manager(User).create(user)
     except UsernameAlreadyExistsError:
         raise HTTPException(status_code=409, detail=f"Username {user.username} already registered")
     else:
-        return crud_user
+        return user_db
 
 
-@app.post('/users/auth', status_code=200, response_model=Token)
-async def authenticate_user(user: User):
+@app.post('/users/auth', status_code=200, response_model=AccessToken)
+async def authenticate_user(user: UserDTO):
     try:
-        crud_user = crud.crud(User).read(user.username)
+        user_db = crud_manager.crud_manager(User).read(user.username)
     except UserNotExistingError:
         raise HTTPException(status_code=403, detail=f"Wrong username or password")
     else:
-        return get_token(user)
+        return create_access_token(user)

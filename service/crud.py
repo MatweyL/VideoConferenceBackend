@@ -25,7 +25,7 @@ class AbstractCRUD:
         pass
 
 
-class CRUDFacade(metaclass=SingletonMeta):
+class CRUDManager(metaclass=SingletonMeta):
 
     def __init__(self):
         self._cruds: Dict = {
@@ -68,3 +68,6 @@ class UserCRUD(AbstractCRUD):
             return self._users.pop(username)
         except KeyError:
             raise UserNotExistingError(username)
+
+
+crud_manager = CRUDManager()

@@ -9,7 +9,7 @@ class BaseEntity(BaseModel):
 
 class User(BaseEntity):
     username: str
-    password: str
+    password_hashed: str
 
 
 class UserInfo(User):
@@ -17,6 +17,20 @@ class UserInfo(User):
     last_name: Optional[str]
 
 
-class Token(BaseEntity):
+class BaseDTOEntity(BaseModel):
+    pass
+
+
+class UserDTO(BaseEntity):
+    username: str
+    password: str
+
+
+class UserInfoDRO(UserDTO):
+    first_name: Optional[str]
+    last_name: Optional[str]
+
+
+class AccessToken(BaseDTOEntity):
     token: str
     type: str

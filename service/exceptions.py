@@ -8,3 +8,8 @@ class UsernameAlreadyExistsError(Exception):
 class UserNotExistingError(Exception):
     def __init__(self, username: str):
         super(UserNotExistingError, self).__init__(f"username '{username}' not existing")
+
+
+class AuthenticationError(Exception):
+    pass
+
