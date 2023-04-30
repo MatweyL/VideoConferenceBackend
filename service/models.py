@@ -9,28 +9,9 @@ class BaseEntity(BaseModel):
 
 class User(BaseEntity):
     username: str
-    password_hashed: str
+    password_hashed: Optional[str]
 
 
-class UserInfo(User):
+class UserInfo(BaseEntity):
     first_name: Optional[str]
     last_name: Optional[str]
-
-
-class BaseDTOEntity(BaseModel):
-    pass
-
-
-class UserDTO(BaseEntity):
-    username: str
-    password: str
-
-
-class UserInfoDRO(UserDTO):
-    first_name: Optional[str]
-    last_name: Optional[str]
-
-
-class AccessToken(BaseDTOEntity):
-    token: str
-    type: str

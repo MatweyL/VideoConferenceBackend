@@ -1,7 +1,5 @@
 from abc import abstractmethod
 
-from service.models import User
-
 
 class AbstractDB:
 

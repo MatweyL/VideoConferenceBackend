@@ -1,9 +1,10 @@
 from abc import abstractmethod
 from typing import Dict
 
-from service.core import SingletonMeta
-from service.exceptions import UsernameAlreadyExistsError, UserNotExistingError
-from service.models import User
+from core import SingletonMeta
+from dto import UserDTO
+from exceptions import UsernameAlreadyExistsError, UserNotExistingError
+from models import User
 
 
 class AbstractCRUD:
@@ -41,7 +42,7 @@ class UserCRUD(AbstractCRUD):
     def __init__(self):
         self._users = {}
 
-    def create(self, user: User) -> User:
+    def create(self, user: UserDTO) -> User:
         try:
             if user.username in self._users:
                 raise BaseException
@@ -56,7 +57,7 @@ class UserCRUD(AbstractCRUD):
         except KeyError:
             raise UserNotExistingError(username)
 
-    def update(self, user: User, *args, **kwargs) -> User:
+    def update(self, user: UserDTO, *args, **kwargs) -> User:
         try:
             self._users[user.username] = user
             return self._users[user.username]

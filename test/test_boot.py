@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from fastapi.testclient import TestClient
 
@@ -64,5 +65,3 @@ class TestUserAuthentication:
         client.post('/users/register', json=user)
         response = client.post('/users/auth', json=user)
         assert response.status_code == 200
-
-

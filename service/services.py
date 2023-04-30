@@ -1,19 +1,18 @@
 import datetime
-import uuid
-from hashlib import md5
 from typing import Optional
 
 from fastapi.security import OAuth2PasswordBearer
+from jose import jwt
 from passlib.context import CryptContext
-from jose import JWTError, jwt
 
-from service.crud import crud_manager
-from service.exceptions import UserNotExistingError, AuthenticationError
-from service.models import AccessToken, User, UserDTO
+from crud import crud_manager
+from dto import AccessToken, UserDTO
+from exceptions import UserNotExistingError, AuthenticationError
+from models import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-SECRET_KEY = uuid.uuid4().hex
+SECRET_KEY = "q34t8ghavejdkzSFPODGBIDNJK4982AWDQDECNWIAEFNJCWEIFUIwnevjsdkxdaeE"
 ALGORITHM = "HS256"
 
 
@@ -25,7 +24,7 @@ def create_access_token(username: str, expires_delta_minutes: float = 86400) -> 
     return AccessToken(token=jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM), type='bearer')
 
 
-def _get_password_hash(password: str) -> str:
+def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
@@ -35,7 +34,7 @@ def _verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def authenticate_user(user: UserDTO) -> Optional[User]:
     try:
-        user_db = crud_manager.crud_manager(User).read(user.username)
+        user_db = crud_manager.crud(User).read(user.username)
     except UserNotExistingError:
         raise AuthenticationError()
     else:
