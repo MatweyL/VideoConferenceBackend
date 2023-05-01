@@ -1,11 +1,13 @@
 import datetime
+import os
 import sys
+from pathlib import Path
 
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.testclient import TestClient
-sys.path.append(r"D:\University\6_semestr\rksp\kursach\video-conference-backend\service")
 
-from service.main import app
+sys.path.append(os.path.join(Path(__file__).parent.parent, 'service'))
+
+from main import app
 
 
 client = TestClient(app)

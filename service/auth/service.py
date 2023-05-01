@@ -1,20 +1,27 @@
 import datetime
-from typing import Optional, Annotated
+from typing import Optional
 
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 
-from crud import crud_manager
-from dto import AccessToken, UserCredentialsDTO, UserDTO, AccessTokenPayload
-from exceptions import UserNotExistingError, AuthenticationError
+from auth.crud import user_crud
+from auth.exceptions import UserNotExistingError, AuthenticationError
+from auth.schemas import UserCredentialsDTO, AccessTokenPayload, AccessToken
 from models import User
+from schemas import UserDTO
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/auth")
 SECRET_KEY = "q34t8ghavejdkzSFPODGBIDNJK4982AWDQDECNWIAEFNJCWEIFUIwnevjsdkxdaeE"
 ALGORITHM = "HS256"
+
+
+def create_user(user: UserCredentialsDTO) -> UserDTO:
+    user_to_create = User(username=user.username, password_hashed=get_password_hash(user.password))
+    user_db: User = user_crud.create(user_to_create)
+    return UserDTO(username=user_db.username)
 
 
 def create_access_token(username: str, expires_delta_minutes: float = 86400) -> AccessToken:
@@ -40,7 +47,7 @@ def _verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_user_by_credentials(user: UserCredentialsDTO) -> Optional[User]:
     try:
-        user_db = crud_manager.crud(User).read(user.username)
+        user_db = user_crud.read(user.username)
     except UserNotExistingError:
         raise AuthenticationError()
     else:
@@ -49,7 +56,7 @@ def get_user_by_credentials(user: UserCredentialsDTO) -> Optional[User]:
         raise AuthenticationError()
 
 
-def get_user_by_jwt_token(token: str = Depends(oauth2_scheme)):
+def get_user_by_jwt_token(token: str = Depends(oauth2_scheme)) -> User:
     try:
         access_token_payload = get_jwt_token_payload(token)
     except JWTError:
@@ -57,9 +64,8 @@ def get_user_by_jwt_token(token: str = Depends(oauth2_scheme)):
     else:
         username: str = access_token_payload.username
         try:
-            user_db: User = crud_manager.crud(User).read(username)
+            user_db: User = user_crud.read(username)
         except UserNotExistingError:
             raise AuthenticationError()
         else:
-            user_dto = UserDTO.parse_obj(user_db)
-            return user_dto
+            return user_db

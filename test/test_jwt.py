@@ -3,7 +3,7 @@ import sys
 
 from fastapi.testclient import TestClient
 
-from service.services import create_access_token, get_jwt_token_payload
+from service.auth.service import create_access_token, get_jwt_token_payload
 
 from service.main import app
 
