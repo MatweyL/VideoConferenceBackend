@@ -6,7 +6,7 @@ from auth.service import create_access_token, get_user_by_credentials, get_passw
 from models import User
 from schemas import UserDTO
 
-router = APIRouter(prefix='/users')
+router = APIRouter()
 
 
 @router.post('/register', status_code=201, response_model=UserDTO)

@@ -1,6 +1,5 @@
 import datetime
 
-from pydantic import BaseModel
 from sqlalchemy import Column, VARCHAR, Integer, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import declarative_base
 

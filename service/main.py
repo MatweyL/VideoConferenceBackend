@@ -1,25 +1,15 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 
 from auth.router import router as auth_router
-from auth.service import get_user_by_jwt_token
-from models import User
-from schemas import UserDTO
+from user.router import router as user_router
+import database
 
 app = FastAPI()
 
-app.include_router(auth_router)
+app.include_router(auth_router, prefix='/users')
+app.include_router(user_router, prefix='/users')
 
 
 @app.get('/ping')
 async def ping():
     return {'message': 'pong'}
-
-
-@app.get('/users/me')
-async def get_profile(user: User = Depends(get_user_by_jwt_token)):
-    return UserDTO(username=user.username)
-
-
-@app.put('/users/me')
-async def update_profile(updated_user: UserDTO = None, user: User = Depends(get_user_by_jwt_token)):
-    return UserDTO(username=user.username)

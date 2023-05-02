@@ -1,16 +1,20 @@
 from exceptions import ServiceBaseException
 
 
-class UsernameAlreadyExistsError(ServiceBaseException):
+class AuthBaseException(ServiceBaseException):
+    pass
+
+
+class UsernameAlreadyExistsError(AuthBaseException):
     def __init__(self, username: str):
         super(UsernameAlreadyExistsError, self).__init__(f"username '{username}' is already registered")
 
 
-class UserNotExistingError(ServiceBaseException):
+class UserNotExistingError(AuthBaseException):
     def __init__(self, username: str):
         super(UserNotExistingError, self).__init__(f"username '{username}' not existing")
 
 
-class AuthenticationError(ServiceBaseException):
+class AuthenticationError(AuthBaseException):
     pass
 
