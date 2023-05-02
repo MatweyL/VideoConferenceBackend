@@ -6,4 +6,5 @@ venv/
 *.env
 *.txt
 *.json
+*.db
 !requirements.txt
