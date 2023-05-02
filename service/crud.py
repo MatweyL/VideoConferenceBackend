@@ -12,7 +12,7 @@ class AbstractCRUD:
         pass
 
     @abstractmethod
-    def update(self, entity, *args, **kwargs):
+    def update(self, entity, entity_to_update, *args, **kwargs):
         pass
 
     @abstractmethod

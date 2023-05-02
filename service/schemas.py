@@ -12,5 +12,10 @@ class UserInfoDTO(BaseDTOEntity):
     last_name: Optional[str]
 
 
-class UserDTO(UserInfoDTO):
+class UserDTO(BaseDTOEntity):
     username: str
+
+
+class UserVerboseInfoDTO(BaseDTOEntity):
+    user: UserDTO
+    user_info: UserInfoDTO

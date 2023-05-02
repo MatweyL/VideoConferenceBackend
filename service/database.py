@@ -11,5 +11,5 @@ Base.metadata.create_all(engine)
 SessionMaker = sessionmaker(bind=engine, expire_on_commit=False)
 
 
-def get_session():
+def get_session() -> sqlalchemy.orm.Session:
     return SessionMaker()
