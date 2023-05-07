@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class BaseDTOEntity(BaseModel):
-    pass
+    created: Optional[float]
 
 
 class UserInfoDTO(BaseDTOEntity):

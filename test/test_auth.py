@@ -85,4 +85,4 @@ class TestJWTTokenPassing:
         headers = {"Authorization": jwt_token}
         response = client.get('/users/me', headers=headers)
         assert response.status_code == 200
-        assert response.json()['username'] == username
+        assert response.json()['user']['username'] == username
