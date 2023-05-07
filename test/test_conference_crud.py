@@ -10,7 +10,7 @@ conference = Conference(
 )
 
 
-class TestUserCRUD:
+class TestConferenceCRUD:
     """ test case for conference crud operations """
     def test_create_conference(self):
         created_conference = conference_crud.create(conference)

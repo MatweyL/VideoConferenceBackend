@@ -7,7 +7,7 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 
 from auth.crud import user_crud
-from auth.exceptions import UserNotExistingError, AuthenticationError
+from auth.errors import UserNotExistingError, AuthenticationError
 from auth.schemas import UserCredentialsDTO, AccessTokenPayload, AccessToken
 from models import User
 from schemas import UserDTO

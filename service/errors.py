@@ -1,2 +1,2 @@
-class ServiceBaseException(Exception):
+class ServiceBaseError(Exception):
     pass

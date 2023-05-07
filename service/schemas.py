@@ -1,10 +1,14 @@
-from typing import Optional
+import datetime
+from typing import Optional, Union
 
 from pydantic import BaseModel
 
 
 class BaseDTOEntity(BaseModel):
-    created: Optional[float]
+    created: Optional[datetime.datetime]
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class UserInfoDTO(BaseDTOEntity):

@@ -1,5 +1,5 @@
-from exceptions import ServiceBaseException
+from errors import ServiceBaseError
 
 
-class UserInfoNotExistingError(ServiceBaseException):
+class UserInfoNotExistingError(ServiceBaseError):
     pass

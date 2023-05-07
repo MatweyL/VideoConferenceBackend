@@ -1,3 +1,4 @@
+import datetime
 from typing import Optional
 
 from schemas import BaseDTOEntity
@@ -8,7 +9,7 @@ class ConferenceDTO(BaseDTOEntity):
     creator_id: int
     is_finished: bool
     is_joining_allowed: bool
-    finished: Optional[float]
+    finished: Optional[datetime.datetime]
 
 
 class ConferenceParticipantDTO(BaseDTOEntity):

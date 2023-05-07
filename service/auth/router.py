@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from auth.exceptions import UsernameAlreadyExistsError, UserNotExistingError
+from auth.errors import UsernameAlreadyExistsError, UserNotExistingError
 from auth.schemas import UserCredentialsDTO, AccessToken
 from auth.service import create_access_token, get_user_by_credentials, get_password_hash, create_user
 from models import User

@@ -41,4 +41,4 @@ class ConferenceParticipant(BaseEntity):
     conference_id = Column(Text, ForeignKey('conference.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     is_banned = Column(Boolean, default=False)
-    role = Column(Text, nullable=False)
+    role = Column(Text, nullable=False, default="user")

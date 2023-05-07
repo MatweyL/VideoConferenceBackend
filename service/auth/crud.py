@@ -1,4 +1,4 @@
-from auth.exceptions import UsernameAlreadyExistsError, UserNotExistingError
+from auth.errors import UsernameAlreadyExistsError, UserNotExistingError
 from auth.schemas import UserCredentialsDTO
 from crud import AbstractCRUD
 from database import get_session
