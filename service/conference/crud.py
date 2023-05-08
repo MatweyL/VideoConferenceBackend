@@ -44,7 +44,7 @@ class ConferenceParticipantCRUD(AbstractCRUD):
     def read(self, conference_id: str, user_id: int, *args, **kwargs) -> ConferenceParticipant:
         with get_session() as session:
             participant = session.query(ConferenceParticipant).filter(
-                ConferenceParticipant.conference_id == conference_id and
+                ConferenceParticipant.conference_id == conference_id,
                 ConferenceParticipant.user_id == user_id
             ).first()
             return participant
