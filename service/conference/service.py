@@ -3,7 +3,7 @@ from functools import wraps
 
 from conference.crud import conference_crud, conference_participant_crud
 from conference.errors import UserNotConferenceCreatorError, ConferenceNotExistedError, \
-    JoiningToConferenceNotAllowedError, ConferenceParticipantBannedError
+    JoiningToConferenceNotAllowedError, ConferenceParticipantBannedError, ConferenceAlreadyFinishedError
 from conference.schemas import ConferenceDTO, ConferenceParticipantDTO
 from conference.utils import convert_conference_to_dto, generate_conference_id, convert_conference_participant_to_dto
 from models import Conference, ConferenceParticipant
@@ -47,7 +47,11 @@ def enter_to_conference(conference_id: str, user_id) -> ConferenceParticipantDTO
     conference = conference_crud.read(conference_id)
     if not conference:
         raise ConferenceNotExistedError(conference_id)
+    if conference.is_finished:
+        raise ConferenceAlreadyFinishedError(conference_id)
+
     conference_participant = conference_participant_crud.read(conference_id, user_id)
+
     if not conference_participant and (conference.is_joining_allowed or conference.creator_id == user_id):
         created_conference_participant = conference_participant_crud.create(ConferenceParticipant(
             conference_id=conference_id,

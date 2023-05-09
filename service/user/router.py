@@ -1,22 +1,33 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from auth.service import get_user_by_jwt_token
 from models import User
 from schemas import UserDTO, UserInfoDTO, UserVerboseInfoDTO
-from user.service import get_user_info, update_user_info
+from user.errors import UserNotExistingError
+from user.service import update_user_info, get_user_verbose_info_by_username
+from user.utils import convert_user_to_dto
 
 router = APIRouter()
 
 
-@router.get('/me')
-async def get_profile(user: User = Depends(get_user_by_jwt_token)):
-    user_info = get_user_info(user.id)
-    return UserVerboseInfoDTO(user=UserDTO(username=user.username),
-                              user_info=user_info)
+@router.get('/me', response_model=UserVerboseInfoDTO)
+async def get_current_user_profile(user: User = Depends(get_user_by_jwt_token)):
+    user_verbose_info = get_user_verbose_info_by_username(user.username)
+    return user_verbose_info
+
+
+@router.get('/', response_model=UserVerboseInfoDTO)
+async def get_other_user_profile(username: str, user: User = Depends(get_user_by_jwt_token)):
+    try:
+        user_verbose_info = get_user_verbose_info_by_username(username)
+    except UserNotExistingError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    else:
+        return user_verbose_info
 
 
 @router.put('/me')
 async def update_profile(updated_user: UserInfoDTO, user: User = Depends(get_user_by_jwt_token)):
     user_info = update_user_info(user.id, updated_user)
-    return UserVerboseInfoDTO(user=UserDTO(username=user.username),
+    return UserVerboseInfoDTO(user=convert_user_to_dto(user),
                               user_info=user_info)

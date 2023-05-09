@@ -20,3 +20,7 @@ class ConferenceNotExistedError(ServiceBaseError):
     def __init__(self, conference_id: str):
         super(ConferenceNotExistedError, self).__init__(f'conference with id={conference_id} does not exists')
 
+
+class ConferenceAlreadyFinishedError(ServiceBaseError):
+    def __init__(self, conference_id: str):
+        super(ConferenceAlreadyFinishedError, self).__init__(f'conference with id={conference_id} were already finished')
