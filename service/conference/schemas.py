@@ -4,6 +4,10 @@ from typing import Optional
 from schemas import BaseDTOEntity
 
 
+class MinConferenceDTO(BaseDTOEntity):
+    id: str
+
+
 class ConferenceDTO(BaseDTOEntity):
     id: str
     creator_id: int
