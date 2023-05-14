@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from auth.errors import UsernameAlreadyExistsError, UserNotExistingError, AuthenticationError
 from auth.schemas import UserCredentialsDTO, AccessToken
-from auth.service import create_access_token, get_user_by_credentials, get_password_hash, create_user
+from auth.service import create_access_token, get_user_by_credentials, create_user
 from models import User
 from schemas import UserDTO
 
