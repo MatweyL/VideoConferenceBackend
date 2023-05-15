@@ -1,39 +1,48 @@
+from .errors import UsernameAlreadyExistsError, UserNotExistingError
 from crud import AbstractCRUD
 from database import get_session
-from models import UserInfo
+from models import User
 
 
-class UserInfoCRUD(AbstractCRUD):
-    def create(self, user_info: UserInfo) -> UserInfo:
+class UserCRUD(AbstractCRUD):
+
+    def create(self, user: User) -> User:
         with get_session() as session:
-            session.add(user_info)
+            existed_user = session.query(User).filter(User.username == user.username).first()
+            if existed_user:
+                raise UsernameAlreadyExistsError(user.username)
+
+            session.add(user)
             session.commit()
-            return user_info
+            return user
 
-    def read(self, user_id: int, *args, **kwargs) -> UserInfo:
-        with get_session() as session:
-            user_info = session.query(UserInfo).filter(UserInfo.user_id == user_id).first()
-            if not user_info:
-                user_info = UserInfo(user_id=user_id)
-                session.add(user_info)
-                session.commit()
-            return user_info
+    def read(self, username: str, *args, **kwargs) -> User:
+        try:
+            with get_session() as session:
+                user = session.query(User).filter(User.username == username).first()
+                if not user:
+                    raise UserNotExistingError(username)
+                else:
+                    return user
+        except BaseException:
+            raise UserNotExistingError(username)
 
-    def update(self, updated_user_info: UserInfo, *args, **kwargs) -> UserInfo:
-        with get_session() as session:
-            user_info = self.read(updated_user_info.user_id)
-            user_info.first_name = updated_user_info.first_name
-            user_info.last_name = updated_user_info.last_name
-            session.add(user_info)
-            session.commit()
-            return updated_user_info
+    def update(self, updated_user: User, *args, **kwargs) -> User:
+        try:
+            with get_session() as session:
+                session.add(updated_user)
+                return updated_user
+        except KeyError:
+            raise UserNotExistingError(updated_user.username)
 
-    def delete(self, user_id: int, *args, **kwargs) -> UserInfo:
-        with get_session() as session:
-            user_info = session.query(UserInfo).filter(UserInfo.user_id == user_id).first()
-            session.delete(user_info)
-            session.commit()
-            return user_info
+    def delete(self, username: str, *args, **kwargs) -> User:
+        try:
+            with get_session() as session:
+                user = session.query(User).filter(User.username == username).first()
+                session.delete(user)
+                return user
+        except KeyError:
+            raise UserNotExistingError(username)
 
 
-user_info_crud = UserInfoCRUD()
+user_crud = UserCRUD()

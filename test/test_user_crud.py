@@ -2,10 +2,10 @@ import datetime
 
 from starlette.testclient import TestClient
 
-from auth.crud import user_crud
+from user.crud import user_crud
 from main import app
 from models import User, UserInfo
-from user.crud import user_info_crud
+from user_info.crud import user_info_crud
 
 client = TestClient(app)
 datetime_now = datetime.datetime.now()

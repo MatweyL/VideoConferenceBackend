@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from auth.router import router as auth_router
-from user.router import router as user_router
+from user.router import router as auth_router
+from user_info.router import router as user_router
 from conference.router import router as conference_router
 
 app = FastAPI()

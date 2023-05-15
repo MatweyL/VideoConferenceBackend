@@ -1,5 +1,12 @@
 from threading import Lock
 
+from fastapi.security import OAuth2PasswordBearer
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/auth")
+SECRET_KEY = "q34t8ghavejdkzSFPODGBIDNJK4982AWDQDECNWIAEFNJCWEIFUIwnevjsdkxdaeE"
+ALGORITHM = "HS256"
 
 class SingletonMeta(type):
     _instances = {}

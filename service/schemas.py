@@ -23,3 +23,10 @@ class UserDTO(BaseDTOEntity):
 class UserVerboseInfoDTO(BaseDTOEntity):
     user: UserDTO
     user_info: UserInfoDTO
+
+
+class UserCredentialsDTO(BaseDTOEntity):
+    username: str
+    password: str
+    grant_type: str = "password"
+

@@ -1,33 +1,29 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 
-from auth.service import get_user_by_jwt_token
+from user.errors import UsernameAlreadyExistsError, UserNotExistingError, AuthenticationError
+from user.schemas import UserCredentialsDTO, AccessToken
+from user.service import create_access_token, get_user_by_credentials, create_user
 from models import User
-from schemas import UserDTO, UserInfoDTO, UserVerboseInfoDTO
-from user.errors import UserNotExistingError
-from user.service import update_user_info, get_user_verbose_info_by_username
-from user.utils import convert_user_to_dto
+from schemas import UserDTO
 
 router = APIRouter()
 
 
-@router.get('/me', response_model=UserVerboseInfoDTO)
-async def get_current_user_profile(user: User = Depends(get_user_by_jwt_token)):
-    user_verbose_info = get_user_verbose_info_by_username(user.username)
-    return user_verbose_info
-
-
-@router.get('/', response_model=UserVerboseInfoDTO)
-async def get_other_user_profile(username: str, user: User = Depends(get_user_by_jwt_token)):
+@router.post('/register', status_code=201, response_model=UserDTO)
+async def register_user(user: UserCredentialsDTO):
     try:
-        user_verbose_info = get_user_verbose_info_by_username(username)
-    except UserNotExistingError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        user_created: UserDTO = create_user(user)
+    except UsernameAlreadyExistsError:
+        raise HTTPException(status_code=409, detail=f"Username {user.username} already registered")
     else:
-        return user_verbose_info
+        return user_created
 
 
-@router.put('/me')
-async def update_profile(updated_user: UserInfoDTO, user: User = Depends(get_user_by_jwt_token)):
-    user_info = update_user_info(user.id, updated_user)
-    return UserVerboseInfoDTO(user=convert_user_to_dto(user),
-                              user_info=user_info)
+@router.post('/auth', status_code=200, response_model=AccessToken)
+async def authenticate_user(user: UserCredentialsDTO):
+    try:
+        user_db: User = get_user_by_credentials(user)
+    except (UserNotExistingError, AuthenticationError):
+        raise HTTPException(status_code=403, detail=f"Wrong username or password")
+    else:
+        return create_access_token(user_db.username)

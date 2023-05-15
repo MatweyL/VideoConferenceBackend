@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from auth.service import get_user_by_jwt_token
+from user.service import get_user_by_jwt_token
 from conference.errors import ConferenceNotExistedError, ConferenceAlreadyFinishedError, \
     ConferenceParticipantBannedError, JoiningToConferenceNotAllowedError, UserNotConferenceCreatorError
 from conference.schemas import ConferenceDTO, ConferenceParticipantDTO, MinConferenceDTO
