@@ -53,9 +53,11 @@ def enter_to_conference(conference_id: str, user_id) -> ConferenceParticipantDTO
     conference_participant = conference_participant_crud.read(conference_id, user_id)
 
     if not conference_participant and (conference.is_joining_allowed or conference.creator_id == user_id):
+        role = "creator" if conference.creator_id == user_id else "user"
         created_conference_participant = conference_participant_crud.create(ConferenceParticipant(
             conference_id=conference_id,
-            user_id=user_id
+            user_id=user_id,
+            role=role
         ))
         return convert_conference_participant_to_dto(created_conference_participant)
     elif conference_participant and not conference_participant.is_banned:
