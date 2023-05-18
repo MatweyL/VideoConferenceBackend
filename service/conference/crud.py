@@ -17,6 +17,11 @@ class ConferenceCRUD(AbstractCRUD):
             conference = session.query(Conference).filter(Conference.id == conference_id).first()
             return conference
 
+    def read_all_by_creator_id(self, creator_id) -> List[Conference]:
+        with get_session() as session:
+            conferences = session.query(Conference).filter(Conference.creator_id == creator_id).all()
+            return conferences
+
     def update(self, updated_conference: Conference, *args, **kwargs):
         with get_session() as session:
             conference = self.read(updated_conference.id)
@@ -55,6 +60,12 @@ class ConferenceParticipantCRUD(AbstractCRUD):
                 ConferenceParticipant.conference_id == conference_id
             ).all()
             return participants
+    def read_user_conferences(self, user_id) -> List[str]:
+        with get_session() as session:
+            conferences = session.query(ConferenceParticipant.conference_id).filter(
+                ConferenceParticipant.user_id == user_id
+            ).all()
+            return [conference[0] for conference in conferences]
 
     def update(self, updated_participant: ConferenceParticipant, *args, **kwargs) -> ConferenceParticipant:
         with get_session() as session:

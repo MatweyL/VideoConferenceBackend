@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional
+from typing import Optional, List
 
 from schemas import BaseDTOEntity
 
@@ -21,3 +21,8 @@ class ConferenceParticipantDTO(BaseDTOEntity):
     user_id: int
     is_banned: bool
     role: str
+
+
+class ConferenceFullDTO(BaseDTOEntity):
+    conference: ConferenceDTO
+    participants: List[ConferenceParticipantDTO]

@@ -39,3 +39,8 @@ def test_update_participant():
     participant.is_banned = True
     updated_participant = conference_participant_crud.update(participant)
     assert updated_participant.is_banned
+
+
+def test_get_user_conferences():
+    conferences = conference_participant_crud.read_user_conferences(1)
+    assert conferences

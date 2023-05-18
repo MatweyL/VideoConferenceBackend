@@ -1,7 +1,8 @@
 import datetime
 import uuid
+from typing import List
 
-from conference.schemas import ConferenceDTO, ConferenceParticipantDTO
+from conference.schemas import ConferenceDTO, ConferenceParticipantDTO, ConferenceFullDTO
 from models import Conference, ConferenceParticipant
 
 
@@ -23,6 +24,13 @@ def convert_conference_participant_to_dto(participant: ConferenceParticipant) ->
         is_banned=participant.is_banned,
         created=participant.created,
         role=participant.role
+    )
+
+
+def convert_to_full_conference_dto(conference: Conference, participants: List[ConferenceParticipant]) -> ConferenceFullDTO:
+    return ConferenceFullDTO(
+        conference=convert_conference_to_dto(conference),
+        participants=[convert_conference_participant_to_dto(participant) for participant in participants]
     )
 
 

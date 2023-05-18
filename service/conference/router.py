@@ -1,9 +1,11 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from user.service import get_user_by_jwt_token
 from conference.errors import ConferenceNotExistedError, ConferenceAlreadyFinishedError, \
     ConferenceParticipantBannedError, JoiningToConferenceNotAllowedError, UserNotConferenceCreatorError
-from conference.schemas import ConferenceDTO, ConferenceParticipantDTO, MinConferenceDTO
+from conference.schemas import ConferenceDTO, ConferenceParticipantDTO, MinConferenceDTO, ConferenceFullDTO
 import conference.service as conference_service
 from models import User
 
@@ -56,7 +58,13 @@ async def prohibit_joining_to_conference(conference: MinConferenceDTO, user: Use
         return finished_conference
 
 
-@router.post("/", response_model=ConferenceDTO)
+@router.post("/", response_model=ConferenceDTO, status_code=201)
 async def create_conference(user: User = Depends(get_user_by_jwt_token)):
     conference = conference_service.create_conference(user.id)
     return conference
+
+
+@router.get("/", response_model=List[ConferenceFullDTO])
+async def get_user_conferences(user: User = Depends(get_user_by_jwt_token)):
+    conferences = conference_service.get_all_user_conferences(user.id)
+    return conferences

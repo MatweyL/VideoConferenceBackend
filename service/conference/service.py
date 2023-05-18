@@ -1,17 +1,34 @@
 import datetime
 from functools import wraps
+from typing import List
 
 from conference.crud import conference_crud, conference_participant_crud
 from conference.errors import UserNotConferenceCreatorError, ConferenceNotExistedError, \
     JoiningToConferenceNotAllowedError, ConferenceParticipantBannedError, ConferenceAlreadyFinishedError
-from conference.schemas import ConferenceDTO, ConferenceParticipantDTO
-from conference.utils import convert_conference_to_dto, generate_conference_id, convert_conference_participant_to_dto
+from conference.schemas import ConferenceDTO, ConferenceParticipantDTO, ConferenceFullDTO
+from conference.utils import convert_conference_to_dto, generate_conference_id, convert_conference_participant_to_dto, \
+    convert_to_full_conference_dto
 from models import Conference, ConferenceParticipant
 
 
 def get_conference(conference_id: str) -> ConferenceDTO:
     conference = conference_crud.read(conference_id)
     return convert_conference_to_dto(conference)
+
+
+def get_all_user_conferences(user_id) -> List[ConferenceFullDTO]:
+    user_conferences_full = []
+    conferences_ids = conference_participant_crud.read_user_conferences(user_id)
+    if not conferences_ids:
+        conferences = conference_crud.read_all_by_creator_id(user_id)
+        return [convert_to_full_conference_dto(conference, []) for conference in conferences]
+    for conference_id in conferences_ids:
+        conference = conference_crud.read(conference_id)
+        participants = conference_participant_crud.read_all(conference_id)
+        user_conferences_full.append(convert_to_full_conference_dto(
+            conference, participants
+        ))
+    return user_conferences_full
 
 
 def check_is_current_user_conference_creator(func):
@@ -28,7 +45,8 @@ def check_is_current_user_conference_creator(func):
 def create_conference(creator_id: int) -> ConferenceDTO:
     conference = Conference(
         id=generate_conference_id(),
-        creator_id=creator_id
+        creator_id=creator_id,
+        created=datetime.datetime.now()
     )
     created_conference = conference_crud.create(conference)
     return convert_conference_to_dto(created_conference)
