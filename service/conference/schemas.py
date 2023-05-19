@@ -8,8 +8,13 @@ class MinConferenceDTO(BaseDTOEntity):
     id: str
 
 
+class ConferenceToCreateDTO(BaseDTOEntity):
+    name: Optional[str]
+
+
 class ConferenceDTO(BaseDTOEntity):
     id: str
+    name: Optional[str]
     creator_id: int
     is_finished: bool
     is_joining_allowed: bool
@@ -21,6 +26,7 @@ class ConferenceParticipantDTO(BaseDTOEntity):
     user_id: int
     is_banned: bool
     role: str
+    conference: Optional[ConferenceDTO]
 
 
 class ConferenceFullDTO(BaseDTOEntity):

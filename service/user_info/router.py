@@ -16,10 +16,10 @@ async def get_current_user_profile(user: User = Depends(get_user_by_jwt_token)):
     return user_verbose_info
 
 
-@router.get('/', response_model=UserVerboseInfoDTO)
-async def get_other_user_profile(username: str, user: User = Depends(get_user_by_jwt_token)):
+@router.get('/{user_id}', response_model=UserVerboseInfoDTO)
+async def get_other_user_profile(user_id: int, user: User = Depends(get_user_by_jwt_token)):
     try:
-        user_verbose_info = get_user_verbose_info_by_username(username)
+        user_verbose_info = get_user_verbose_info_by_id(user_id)
     except UserNotExistingError as e:
         raise HTTPException(status_code=404, detail=str(e))
     else:

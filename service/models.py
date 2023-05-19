@@ -29,6 +29,7 @@ class UserInfo(BaseEntity):
 class Conference(BaseEntity):
     __tablename__ = "conference"
     id = Column(Text, nullable=False,  primary_key=True, unique=True)
+    name = Column(Text, nullable=True)
     creator_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     is_finished = Column(Boolean, default=False, nullable=False)
     is_joining_allowed = Column(Boolean, default=True, nullable=False)

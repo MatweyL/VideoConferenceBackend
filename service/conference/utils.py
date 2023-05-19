@@ -9,6 +9,7 @@ from models import Conference, ConferenceParticipant
 def convert_conference_to_dto(conference: Conference) -> ConferenceDTO:
     return ConferenceDTO(
         id=conference.id,
+        name=conference.name,
         creator_id=conference.creator_id,
         is_finished=conference.is_finished,
         is_joining_allowed=conference.is_joining_allowed,
@@ -17,13 +18,15 @@ def convert_conference_to_dto(conference: Conference) -> ConferenceDTO:
     )
 
 
-def convert_conference_participant_to_dto(participant: ConferenceParticipant) -> ConferenceParticipantDTO:
+def convert_conference_participant_to_dto(participant: ConferenceParticipant, conference: Conference = None) -> ConferenceParticipantDTO:
+    conference_dto = convert_conference_to_dto(conference) if conference else None
     return ConferenceParticipantDTO(
         conference_id=participant.conference_id,
         user_id=participant.user_id,
         is_banned=participant.is_banned,
         created=participant.created,
-        role=participant.role
+        role=participant.role,
+        conference=conference_dto
     )
 
 

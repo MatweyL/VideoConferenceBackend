@@ -6,6 +6,14 @@ from user_info.errors import UserNotExistingError
 from user_info.utils import convert_user_to_dto, convert_user_info_to_dto
 
 
+def get_user_verbose_info_by_id(user_id: int) -> UserVerboseInfoDTO:
+    user = user_crud.read_by_id(user_id)
+    if not user:
+        raise UserNotExistingError(username)
+    user_info = user_info_crud.read(user.id)
+    return UserVerboseInfoDTO(user=convert_user_to_dto(user),
+                              user_info=convert_user_info_to_dto(user_info))
+
 def get_user_verbose_info_by_username(username: str) -> UserVerboseInfoDTO:
     user = user_crud.read(username)
     if not user:

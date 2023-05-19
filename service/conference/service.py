@@ -5,7 +5,7 @@ from typing import List
 from conference.crud import conference_crud, conference_participant_crud
 from conference.errors import UserNotConferenceCreatorError, ConferenceNotExistedError, \
     JoiningToConferenceNotAllowedError, ConferenceParticipantBannedError, ConferenceAlreadyFinishedError
-from conference.schemas import ConferenceDTO, ConferenceParticipantDTO, ConferenceFullDTO
+from conference.schemas import ConferenceDTO, ConferenceParticipantDTO, ConferenceFullDTO, ConferenceToCreateDTO
 from conference.utils import convert_conference_to_dto, generate_conference_id, convert_conference_participant_to_dto, \
     convert_to_full_conference_dto
 from models import Conference, ConferenceParticipant
@@ -18,10 +18,8 @@ def get_conference(conference_id: str) -> ConferenceDTO:
 
 def get_all_user_conferences(user_id) -> List[ConferenceFullDTO]:
     user_conferences_full = []
-    conferences_ids = conference_participant_crud.read_user_conferences(user_id)
-    if not conferences_ids:
-        conferences = conference_crud.read_all_by_creator_id(user_id)
-        return [convert_to_full_conference_dto(conference, []) for conference in conferences]
+    conferences_ids = set(conference_participant_crud.read_user_conferences(user_id))
+    conferences_ids.update([conference.id for conference in conference_crud.read_all_by_creator_id(user_id)])
     for conference_id in conferences_ids:
         conference = conference_crud.read(conference_id)
         participants = conference_participant_crud.read_all(conference_id)
@@ -42,11 +40,12 @@ def check_is_current_user_conference_creator(func):
     return inner
 
 
-def create_conference(creator_id: int) -> ConferenceDTO:
+def create_conference(creator_id: int, conference_to_create: ConferenceToCreateDTO) -> ConferenceDTO:
     conference = Conference(
         id=generate_conference_id(),
         creator_id=creator_id,
-        created=datetime.datetime.now()
+        created=datetime.datetime.now(),
+        name=conference_to_create.name
     )
     created_conference = conference_crud.create(conference)
     return convert_conference_to_dto(created_conference)
@@ -69,7 +68,6 @@ def enter_to_conference(conference_id: str, user_id) -> ConferenceParticipantDTO
         raise ConferenceAlreadyFinishedError(conference_id)
 
     conference_participant = conference_participant_crud.read(conference_id, user_id)
-
     if not conference_participant and (conference.is_joining_allowed or conference.creator_id == user_id):
         role = "creator" if conference.creator_id == user_id else "user"
         created_conference_participant = conference_participant_crud.create(ConferenceParticipant(
@@ -77,9 +75,9 @@ def enter_to_conference(conference_id: str, user_id) -> ConferenceParticipantDTO
             user_id=user_id,
             role=role
         ))
-        return convert_conference_participant_to_dto(created_conference_participant)
+        return convert_conference_participant_to_dto(created_conference_participant, conference)
     elif conference_participant and not conference_participant.is_banned:
-        return convert_conference_participant_to_dto(conference_participant)
+        return convert_conference_participant_to_dto(conference_participant, conference)
     else:
         if conference_participant and conference_participant.is_banned:
             raise ConferenceParticipantBannedError(user_id)
