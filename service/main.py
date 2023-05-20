@@ -1,12 +1,16 @@
+import logging as logger
+
+import fastapi_socketio
+import socketio
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from signaling import sio
 from user.router import router as auth_router
 from user_info.router import router as user_router
 from conference.router import router as conference_router
 
 app = FastAPI()
-
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -19,7 +23,5 @@ app.include_router(auth_router, prefix='/users')
 app.include_router(user_router, prefix='/users')
 app.include_router(conference_router, prefix='/conferences')
 
+socketio_app = socketio.ASGIApp(sio, app)
 
-@app.get('/ping')
-async def ping():
-    return {'message': 'pong'}
