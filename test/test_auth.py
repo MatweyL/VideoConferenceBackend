@@ -7,10 +7,10 @@ from fastapi.testclient import TestClient
 
 sys.path.append(os.path.join(Path(__file__).parent.parent, 'service'))
 
-from main import app
+from main import fastapi_app
 
 
-client = TestClient(app)
+client = TestClient(fastapi_app)
 datetime_now = int(datetime.datetime.now().timestamp())
 username = f'test_user_{datetime_now}'
 password = f'test_password_{datetime_now}'

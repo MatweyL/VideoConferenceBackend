@@ -5,10 +5,10 @@ from fastapi.testclient import TestClient
 
 from service.user.service import create_access_token, get_jwt_token_payload
 
-from service.main import app
+from service.main import fastapi_app
 
 
-client = TestClient(app)
+client = TestClient(fastapi_app)
 datetime_now = datetime.datetime.now()
 username = f'test_user_{datetime_now}'
 password = f'test_password_{datetime_now}'

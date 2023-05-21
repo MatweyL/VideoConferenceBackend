@@ -3,11 +3,11 @@ import datetime
 from starlette.testclient import TestClient
 
 from user.crud import user_crud
-from main import app
+from main import fastapi_app
 from models import User, UserInfo
 from user_info.crud import user_info_crud
 
-client = TestClient(app)
+client = TestClient(fastapi_app)
 datetime_now = datetime.datetime.now()
 username = f'test_user_{datetime_now}'
 password = f'test_password_{datetime_now}'
