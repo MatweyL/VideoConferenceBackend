@@ -15,13 +15,14 @@ def get_users_sids_in_room(room_id):
 @sio.on("connect")
 def on_connect(sid, *args, **kwargs):
     print("New socket connected ", sid)
+    print("\nusers: ", users_in_room, "\n")
 
 
 @sio.on("join-room")
 async def on_join_room(sid, data):
     room_id = data["room_id"]
     display_name = data["name"]
-
+    print(f"USER {display_name} ENTERING TO {room_id} ")
     # register sid to the room
     if display_name in names_sid_mapping:
         print(f"Detected page reloading in {display_name}")
