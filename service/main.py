@@ -22,4 +22,4 @@ fastapi_app.include_router(conference_router, prefix='/conferences')
 
 
 socketio_app = socketio.ASGIApp(sio, fastapi_app)
-app = fastapi_app
+app = socketio_app
