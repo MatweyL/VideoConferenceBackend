@@ -17,6 +17,7 @@ class UserInfoDTO(BaseDTOEntity):
 
 
 class UserDTO(BaseDTOEntity):
+    id: Optional[int]
     username: str
 
 

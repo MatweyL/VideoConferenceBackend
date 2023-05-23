@@ -9,6 +9,7 @@ from conference.schemas import ConferenceDTO, ConferenceParticipantDTO, Conferen
 from conference.utils import convert_conference_to_dto, generate_conference_id, convert_conference_participant_to_dto, \
     convert_to_full_conference_dto
 from models import Conference, ConferenceParticipant
+from user_info.service import get_user_verbose_info_by_id
 
 
 def get_conference(conference_id: str) -> ConferenceDTO:
@@ -23,9 +24,12 @@ def get_all_user_conferences(user_id) -> List[ConferenceFullDTO]:
     for conference_id in conferences_ids:
         conference = conference_crud.read(conference_id)
         participants = conference_participant_crud.read_all(conference_id)
-        user_conferences_full.append(convert_to_full_conference_dto(
+        user_conference_full = convert_to_full_conference_dto(
             conference, participants
-        ))
+        )
+        for participant in user_conference_full.participants:
+            participant.user_verbose = get_user_verbose_info_by_id(participant.user_id)
+        user_conferences_full.append(user_conference_full)
     return user_conferences_full
 
 
@@ -75,9 +79,13 @@ def enter_to_conference(conference_id: str, user_id) -> ConferenceParticipantDTO
             user_id=user_id,
             role=role
         ))
-        return convert_conference_participant_to_dto(created_conference_participant, conference)
+        participant = convert_conference_participant_to_dto(created_conference_participant, conference)
+        participant.user_verbose = get_user_verbose_info_by_id(participant.user_id)
+        return participant
     elif conference_participant and not conference_participant.is_banned:
-        return convert_conference_participant_to_dto(conference_participant, conference)
+        participant = convert_conference_participant_to_dto(conference_participant, conference)
+        participant.user_verbose = get_user_verbose_info_by_id(participant.user_id)
+        return participant
     else:
         if conference_participant and conference_participant.is_banned:
             raise ConferenceParticipantBannedError(user_id)

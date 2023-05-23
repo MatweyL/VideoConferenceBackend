@@ -1,7 +1,7 @@
 import datetime
 from typing import Optional, List
 
-from schemas import BaseDTOEntity
+from schemas import BaseDTOEntity, UserVerboseInfoDTO
 
 
 class MinConferenceDTO(BaseDTOEntity):
@@ -27,6 +27,7 @@ class ConferenceParticipantDTO(BaseDTOEntity):
     is_banned: bool
     role: str
     conference: Optional[ConferenceDTO]
+    user_verbose: Optional[UserVerboseInfoDTO]
 
 
 class ConferenceFullDTO(BaseDTOEntity):

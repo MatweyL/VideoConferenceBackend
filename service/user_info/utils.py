@@ -3,7 +3,7 @@ from schemas import UserDTO, UserInfoDTO
 
 
 def convert_user_to_dto(user: User) -> UserDTO:
-    return UserDTO(username=user.username)
+    return UserDTO(username=user.username, id=user.id)
 
 
 def convert_user_info_to_dto(user_info: UserInfo) -> UserInfoDTO:
